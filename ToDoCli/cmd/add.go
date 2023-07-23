@@ -6,8 +6,12 @@ package cmd
 import (
 	"example/ToDOCli/todo"
 	"fmt"
+	"log"
+
 	"github.com/spf13/cobra"
 )
+
+var priority int
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
@@ -24,18 +28,31 @@ to quickly create a Cobra application.`,
 
 func addRun(cmd *cobra.Command, args []string) {
 
-	items := []todo.Item{}
+	items, err := todo.ReadItems(dataFile)
+
+	if err != nil {
+		log.Printf("%v", err)
+	}
 
 	for _, x := range args {
 
-		items = append(items, todo.Item{Text: x})
+		item := todo.Item{Text: x}
+		item.SetPriority(priority)
+
+		items = append(items, item)
 	}
 
-	fmt.Println(items)
+	err = todo.SaveItems(dataFile, items)
+
+	if err != nil {
+		fmt.Errorf("%v", err)
+	}
 }
 
 func init() {
 	rootCmd.AddCommand(addCmd)
+
+	addCmd.Flags().IntVarP(&priority, "prioriry", "p", 2, "Prioriry:1,2,3")
 
 	// Here you will define your flags and configuration settings.
 

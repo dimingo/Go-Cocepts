@@ -1,8 +1,14 @@
 package cmd
 
 import (
+	"log"
+	"os"
+
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
+
+var dataFile string
 
 var (
 	rootCmd = &cobra.Command{
@@ -25,4 +31,15 @@ tri CLI app is the perfect way to stay organized and on top of your to-do list. 
 // Execute executes the root command.
 func Execute() error {
 	return rootCmd.Execute()
+}
+
+func init() {
+
+	home, err := homedir.Dir()
+
+	if err != nil {
+		log.Println("Unable to detect home directory. Please set data file using --datafile.")
+	}
+
+	rootCmd.PersistentFlags().StringVar(&dataFile, "datafile", home+string(os.PathSeparator)+"projects/Go-Cocepts/ToDoCli/.todo.json", "datafile to store todos")
 }
