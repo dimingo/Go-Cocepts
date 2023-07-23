@@ -10,6 +10,7 @@ type Item struct {
 	Text     string
 	Priority int
 	Position int
+	Done     bool
 }
 
 func SaveItems(filename string, items []Item) error {
@@ -66,4 +67,28 @@ func (i *Item) PrettyP() string {
 func (i *Item) Label() string {
 	return strconv.Itoa(i.Position) + "."
 
+}
+
+// ByPri implements sort.Interface for []Item bases on the priority & position field
+
+type ByPri []Item
+
+func (s ByPri) Len() int      { return len(s) }
+func (s ByPri) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s ByPri) Less(i, j int) bool {
+
+	if s[i].Done == s[j].Done {
+		if s[i].Priority == s[j].Position {
+			return s[i].Position < s[j].Position
+		}
+		return s[i].Priority < s[j].Position
+	}
+	return !s[i].Done
+}
+
+func (i *Item) PrettyDone() string {
+	if i.Done {
+		return "X"
+	}
+	return ""
 }
