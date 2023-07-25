@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cfgFile string
+
 var dataFile string
 
 var (
@@ -34,6 +36,7 @@ func Execute() error {
 }
 
 func init() {
+	cobra.OnInitialize(initConfig)
 
 	home, err := homedir.Dir()
 
